@@ -82,10 +82,10 @@ void Start()
 `MaskRenderTexture` はマスク画像の書き込み先の RenderTexture です。
 
 `Graphics.SetRenderTarget(MaskRenderTexture.colorBuffer, TargetRenderTexture.depthBuffer);` がポイントです。
-`Graphics.SetRenderTarget`で、カラーバッファーに `MaskRenderTexture`、Depthバッファーに `TargetRenderTexture` を指定します。
+`Graphics.SetRenderTarget`で、カラーバッファーに `MaskRenderTexture`、Depth バッファーに `TargetRenderTexture` を指定します。
 
 Stencil 情報は Depth バッファーに含まれているので（[参考資料](https://open.gl/depthstencils)）、
-Depthバッファーに `TargetRenderTexture` を指定することで、以降の処理で `TargetRenderTexture` の Stencil 情報を参照できるのだと思われます。
+Depth バッファーに `TargetRenderTexture` を指定することで、以降の処理で `TargetRenderTexture` の Stencil 情報を参照できるのだと思われます。
 
 ```cs
 public void OnPostRender()
