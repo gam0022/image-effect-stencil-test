@@ -60,7 +60,7 @@ OnRenderImage 相当の機能を OnPostRender で置き換えることで、Sten
 
 シーンを再生した状態で Window メニューから Frame Debugger を起動すると、レンダリング過程の RenderTexture の中身を見れます。
 
-Frame Debugger から `Hidden/Mask` の結果を確認すると、図2の意図した結果となりました。
+Frame Debugger から `Hidden/Mask` の結果を確認すると、**図2** の意図した結果となりました。
 
 ### 実装の解説
 
