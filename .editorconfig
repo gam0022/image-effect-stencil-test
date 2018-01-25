@@ -1,0 +1,26 @@
+# http://editorconfig.org/
+# エディタの細かい設定を行うよ
+
+# top-most EditorConfig file
+root = true
+
+# Unityのスクリプト全般に関する設定よ
+[*.{cs,shader,cginc}]
+
+#文字コード
+charset = utf-8-bom
+
+#インデントスタイル
+indent_style = space
+
+#インデントサイズ
+indent_size = 4
+
+#改行
+end_of_line = lf
+
+#最終ラインに改行入れるよ
+insert_final_newline = true
+
+#改行前の余分な空白を消すよ（対応してないツールもある）
+trim_trailing_whitespace = true
