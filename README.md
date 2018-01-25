@@ -20,11 +20,11 @@ Unity 2017.2.0.p3 でも Stencil はクリアされる仕様のままです。
 - Unity 2017.2.0.p3
 - macOS Sieera 10.12.6
 
-## OnPostRender による解決方法
+## Stencilテストが常にPassしてしまう例
 
-OnRenderImage 相当の機能を OnPostRender で置き換えることで、Stencil バッファを参照したマスク画像の生成を実装できました。
+まずはStencilが無視される例を紹介します。
 
-検証シーン: [Assets/OnPostRenderTest/](https://github.com/gam0022/image-effect-stencil-test/blob/master/Assets/OnPostRenderTest/)
+検証シーン: [Assets/ImageEffectOpaqueTest/](https://github.com/gam0022/image-effect-stencil-test/tree/master/Assets/ImageEffectOpaqueTest)
 
 **図1** はシーンの様子です。
 
@@ -34,13 +34,33 @@ OnRenderImage 相当の機能を OnPostRender で置き換えることで、Sten
 
 **図1: シーンの描画結果**
 
+`Hidden/Mask` は Stencil が 1 の箇所だけを青く塗りつぶすシェーダーです。これが正しく実行されると **図2** の地球のマスク画像を生成できます。
+
+![意図した Hidden/Mask の結果](images/mask_render_texture.png)
+
+**図2: 意図した Hidden/Mask の結果**
+
+しかし、実際には **図3** のように常に Stencil テストが Pass してしまい、全画面が青くなってしまいました。
+
+![意図しない Hidden/Mask の結果](images/failed_render_texture.png)
+
+**図3: 意図しない Hidden/Mask の結果**
+
+OnRenderImage に [[ImageEffectOpaque]を指定しなければ、ステンシルバッファを取り出せない](https://qiita.com/kodai100/items/fff5983f2b52f2ba5cff)という情報があったため、[ImageEffectOpaque] を指定する検証も行いましたが、現在の Unity ではそれでも Stencil は無視され、常に Stencil テストがPassするようでした。
+
+## OnPostRender による解決方法
+
+OnRenderImage 相当の機能を OnPostRender で置き換えることで、Stencil バッファを参照したマスク画像の生成を実装できました。
+
+検証シーン: [Assets/OnPostRenderTest/](https://github.com/gam0022/image-effect-stencil-test/blob/master/Assets/OnPostRenderTest/)
+
+シーンの構成は先程の意図しない例と同じです。
+
+先程の例ではディスプレイに対してポストエフェクトを実行していましたが、今回は RenderTexture に対してポストエフェクトを実行しています。
+
 シーンを再生した状態で Window メニューから Frame Debugger を起動すると、レンダリング過程の RenderTexture の中身を見れます。
 
-`Hidden/Mask` は Stencil が 1 の箇所だけ実行されるシェーダーです。これが正しく実行されると **図2** の地球のマスク画像を生成できます。
-
-![シーンの描画結果](images/mask_render_texture.png)
-
-**図2: マスク画像の描画結果**
+Frame Debugger から `Hidden/Mask` の結果を確認すると、図2の意図した結果となりました。
 
 ### 実装の解説
 
@@ -92,12 +112,6 @@ public void OnPostRender()
 [[Unity 5.6.0f3] empty stencil buffer OnRenderImage](https://forum.unity.com/threads/unity-5-6-0f3-empty-stencil-buffer-onrenderimage.473444/)で紹介されている CommandBuffer を利用した方法も実装しましたが、意図したとおりに動きませんでした。
 
 検証シーン: [Assets/CommandBufferTest/](https://github.com/gam0022/image-effect-stencil-test/blob/master/Assets/CommandBufferTest/)
-
-## [ImageEffectOpaque] について調査
-
-OnRenderImage に [[ImageEffectOpaque]を指定しなければ、ステンシルバッファを取り出せない](https://qiita.com/kodai100/items/fff5983f2b52f2ba5cff)という情報があったため、[ImageEffectOpaque] を指定する検証も行いましたが、現在の Unity ではそれでも Stencil は無視され、常に Stencil テストがPassするようでした。
-
-検証シーン: [Assets/ImageEffectOpaqueTest/](https://github.com/gam0022/image-effect-stencil-test/tree/master/Assets/ImageEffectOpaqueTest)
 
 ## 考察
 
